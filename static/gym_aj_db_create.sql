@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users(
     firstname VARCHAR(50),
     lastname VARCHAR(50),
     email VARCHAR(100),
-    passwords VARCHAR(20),
+    passwords VARCHAR(200),
     created_at DATETIME
 ) Engine= InnoDB ;
 

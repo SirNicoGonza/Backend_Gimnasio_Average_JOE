@@ -14,9 +14,6 @@ value (1, 2, true);
 insert into empleados (user_id, gym_asignado)
 values (2, 'Gym 1 - Alavarado 150');
 
-select * from socios;
-select * from users;
-
 insert into pagos_planes (ID_socio, plan)
 value (1,2);
 
@@ -25,5 +22,3 @@ value ('Clase de Pilate', 'Profe Peter Parker', 1000.00, 18, '2025-01-15', 30);
 
 insert into pagos_actividades (socio, actividad)
 value (1, 1);
-
-select * from vista_pagos_socios;

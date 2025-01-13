@@ -1,0 +1,21 @@
+from db import DatabaseConnection
+
+class UserModel:
+    """ Clase para el Model de user. Es  para tener los metodos para new user y login.
+    """
+
+    @staticmethod
+    def crear_user(nombre, apellido, email, hash_password):
+        """ Metodo para crear un nuevo usuario. Se necesitan un username (nombre) 
+            y un password(una contraseña que ya debe estar encriptada).
+        """
+        query= "INSERT INTO users(firstname, lastname, email, passwords) VALUE (%s, %s, %s, %s);"
+        params= (nombre, apellido, email, hash_password)
+
+        try:
+            DatabaseConnection.execute_query(query, params)
+            return {'Usuario creado correctamente.'}
+        except Exception as e:
+            return {'error': str(e)}
+        finally:
+            DatabaseConnection.close_connection()

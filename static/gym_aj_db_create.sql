@@ -1,4 +1,4 @@
-CREATE SCHEMA IF NOT EXISTS gym_AJ_db;
+CREATE SCHEMA IF NOT EXISTS gym_aj_db;
 
 /*Se crean las tablas de la base de datos.*/
 USE gym_AJ_db;
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users(
     lastname VARCHAR(50),
     email VARCHAR(100),
     passwords VARCHAR(200),
-    created_at DATETIME
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) Engine= InnoDB ;
 
 create table if not exists planes(
@@ -119,4 +119,4 @@ SELECT s.id_socio, u.firstname, u.lastname, a.actividad_name AS tipo_pago, a.pre
 FROM pagos_actividades pga
 INNER JOIN actividades a ON a.id_actividad = pga.actividad
 INNER JOIN socios s ON s.id_socio = pga.socio
-INNER JOIN users u ON u.id_user = s.id_user
+INNER JOIN users u ON u.id_user = s.id_user;

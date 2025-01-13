@@ -12,3 +12,9 @@ def registro():
 
     #se llama la funcion para registrar el nuevo user
     return UserController.registrar_nuevo(data)
+
+
+@user_bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    return UserController.login(data)

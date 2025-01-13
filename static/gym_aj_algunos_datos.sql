@@ -1,4 +1,4 @@
-use gym_AJ_db;
+use gym_aj_db;
 
 insert into users (firstname, lastname, email, passwords, created_at)
 values ('Pepe', 'Power', 'pepepower@pepe.com', 'qwertyuiop', now()),
@@ -22,3 +22,8 @@ value ('Clase de Pilate', 'Profe Peter Parker', 1000.00, 18, '2025-01-15', 30);
 
 insert into pagos_actividades (socio, actividad)
 value (1, 1);
+
+select * from users;
+
+select * from users
+where email= 'pepepower@pepe.com' and passwords= 'qwertyuiop';

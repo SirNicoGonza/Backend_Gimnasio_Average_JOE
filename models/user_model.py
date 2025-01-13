@@ -6,7 +6,7 @@ class UserModel:
 
     @staticmethod
     def crear_user(nombre, apellido, email, hash_password):
-        """ Metodo para crear un nuevo usuario. Se necesitan un username (nombre) 
+        """ Metodo para crear un nuevo usuario. Se necesitan nombre, apellido, email 
             y un password(una contraseña que ya debe estar encriptada).
         """
         query= "INSERT INTO users(firstname, lastname, email, passwords) VALUE (%s, %s, %s, %s);"
@@ -19,3 +19,21 @@ class UserModel:
             return {'error': str(e)}
         finally:
             DatabaseConnection.close_connection()
+
+    @staticmethod
+    def buscar_user(email):
+        """ Metodo estatico que busca por el email al usuario.
+        """
+        query= "SELECT id_user, firstname, lastname, email, passwords from users WHERE email= %s"
+        params= (email,)
+
+        try:
+            conn= DatabaseConnection.get_connection()
+            cursor= conn.cursor(dictionary=True)
+            cursor.execute(query, params)
+            user= cursor.fetchone()
+            return user
+        except Exception as e:
+            return {'error': str(e)}
+        finally:
+            cursor.close()

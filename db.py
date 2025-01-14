@@ -1,6 +1,7 @@
 import mysql.connector
 from config import Config
 
+#Cambiar a conectionpool
 class DatabaseConnection:
     _connection = None
     _config = None
@@ -35,7 +36,7 @@ class DatabaseConnection:
         return cursor
 
     @classmethod
-    def fetch_all(cls, query, database_name=None, params=None):
+    def fetch_all(cls, query, params=None):
         cursor = cls.get_connection().cursor()
         cursor.execute(query, params)
         return cursor.fetchall()

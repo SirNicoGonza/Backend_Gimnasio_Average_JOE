@@ -27,9 +27,6 @@ class UserController:
         password_bytes = password.encode('utf-8')
         hash_password = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
 
-        # Verificar la contraseña
-        #bcrypt.checkpw(password, hashed_password)  # Devuelve True si coincide
-
         #Se crea el userario
         if UserModel.crear_user(nombre, apellido, email, hash_password):
             return jsonify({'mensaje': 'Usuario creado exitosamente'}), 201
@@ -42,17 +39,11 @@ class UserController:
         email= data.get('email')
         password= data.get('password')
 
-        #Se encripta el password
-        # Verificar la contraseña
-        #bcrypt.checkpw(password, hashed_password)
-
         user= UserModel.buscar_user(email)
 
+        #Se hace la verificacion de la contraseña
         if not bcrypt.checkpw(password.encode('utf-8'), user['passwords'].encode('utf-8')):
             return {"error": "Contraseña incorrecta"}, 401
-
-        #if not user or not bcrypt.checkpw(user['passwords'], password):
-        #    return jsonify({'mensaje': 'Credenciales incorrectas'}), 401
         
-        token = create_access_token(identity=user['id_user'], expires_delta=timedelta(hours=1))
+        token = create_access_token(identity=user['id_user'], expires_delta=timedelta(hours=12))
         return jsonify({'token': token}), 200

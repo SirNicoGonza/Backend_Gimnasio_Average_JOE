@@ -18,3 +18,8 @@ def registro():
 def login():
     data = request.get_json()
     return UserController.login(data)
+
+@user_bp.route('/profile/<int:user_id>', methods=['GET'])
+def obtener_profile(user_id):
+    """ Ruta para obtener el perfil de un usuario por su ID. """
+    return UserController.obtener_profile(user_id)

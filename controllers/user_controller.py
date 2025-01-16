@@ -47,3 +47,37 @@ class UserController:
         
         token = create_access_token(identity=user['id_user'], expires_delta=timedelta(hours=12))
         return jsonify({'token': token}), 200
+    
+    @staticmethod
+    def obtener_profile(user_id):
+        """ Método para obtener el perfil de un usuario por su ID. """
+        user = UserModel.buscar_user_por_id(user_id)
+
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        # Verificar si el usuario es un empleado (profesor)
+        if UserModel.es_empleado(user_id):
+            profile = {
+                "id_user": user['id_user'],
+                "firstname": user['firstname'],
+                "lastname": user['lastname'],
+                "email": user['email'],
+                "role": "empleado",  # Rol de empleado
+                "gym_asignado": UserModel.obtener_gym_asignado(user_id)
+            }
+        # Verificar si el usuario es un socio
+        elif UserModel.es_socio(user_id):
+            profile = {
+                "id_user": user['id_user'],
+                "firstname": user['firstname'],
+                "lastname": user['lastname'],
+                "email": user['email'],
+                "role": "socio",  # Rol de socio
+                "plan": UserModel.obtener_plan_socio(user_id),
+                "activo": UserModel.obtener_estado_socio(user_id)
+            }
+        else:
+            return jsonify({"error": "Rol desconocido"}), 400  # En caso de que no sea ni socio ni empleado
+
+        return jsonify({"profile": profile}), 200

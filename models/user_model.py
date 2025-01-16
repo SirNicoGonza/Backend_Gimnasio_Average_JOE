@@ -116,3 +116,16 @@ class UserModel:
             return result[0] if result is not None else False
         except Exception as e:
             return False
+        
+    @staticmethod
+    def asignar_socio(user_id):
+        """Asigna el rol de socio al usuario."""
+        query = "INSERT INTO socios (id_user, plan_id, activo) VALUES (%s, %s, %s)"
+        params = (user_id, None, True)  # Inicialmente sin plan asignado, y marcado como activo
+
+        try:
+            DatabaseConnection.execute_query(query, params)
+            return True
+        except Exception as e:
+            print(f"Error al asignar socio: {e}")
+            return False

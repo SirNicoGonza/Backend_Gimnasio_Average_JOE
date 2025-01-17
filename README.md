@@ -39,6 +39,7 @@ DATABASE_NAME=nombre_de_la_base
 5. **Iniciar servidor**:
 
 flask run
+python run.py
 
 
 Autores

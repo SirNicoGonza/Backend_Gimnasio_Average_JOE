@@ -13,7 +13,7 @@ def create_app():
     jwt = JWTManager(app)
 
     #Habilitar CORS para todas las rutas
-    CORS(app, supports_credentials=True)
+    CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
     #Se registran los blueprint
     app.register_blueprint(user_bp, url_prefix= '/user')

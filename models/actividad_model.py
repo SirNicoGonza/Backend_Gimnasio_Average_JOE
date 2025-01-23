@@ -1,4 +1,6 @@
 from db import DatabaseConnection
+from flask import jsonify
+from utils.convertir_a_json import convertir_valores_para_json
 
 class ActividadModel:
     '''
@@ -21,7 +23,11 @@ class ActividadModel:
         '''Obtiene la lista de todas las actividades'''
         query = 'SELECT * from actividades;'
         try:
-            return DatabaseConnection.fetch_all(query)
+            result= DatabaseConnection.fetch_all(query)
+            result_formateado= convertir_valores_para_json(result)
+            
+            return result_formateado
+        
         except Exception as e:
             return {'error': str(e)}
         

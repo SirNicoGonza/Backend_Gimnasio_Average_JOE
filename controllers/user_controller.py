@@ -1,12 +1,21 @@
 from flask import jsonify
 import bcrypt
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from datetime import timedelta
 from models.user_model import UserModel
 
 class UserController:
     """ Clase controlador de Usarios
     """
+
+    @staticmethod
+    def obtener_id():
+        '''Obtiene el id de usuario desde el token'''
+        user_id = get_jwt_identity()
+        if UserModel.es_empleado(user_id):
+            return (user_id, 'empleado')
+        elif UserModel.es_socio(user_id):
+            return (user_id, 'socio')
 
     @staticmethod
     def registrar_nuevo(data):
@@ -85,31 +94,33 @@ class UserController:
         }), 200
     
     @staticmethod
-    def obtener_profile(user_id):
+    @jwt_required
+    def obtener_profile():
         """ Método para obtener el perfil de un usuario por su ID. """
+        user_id, rol = UserController.obtener_id()
         user = UserModel.buscar_user_por_id(user_id)
 
         if not user:
             return jsonify({"error": "Usuario no encontrado"}), 404
 
         # Verificar si el usuario es un empleado (profesor)
-        if UserModel.es_empleado(user_id):
+        if rol == 'empleado':
             profile = {
                 "id_user": user['id_user'],
                 "firstname": user['firstname'],
                 "lastname": user['lastname'],
                 "email": user['email'],
-                "role": "empleado",  # Rol de empleado
+                "role": rol,  # Rol de empleado
                 "gym_asignado": UserModel.obtener_gym_asignado(user_id)
             }
         # Verificar si el usuario es un socio
-        elif UserModel.es_socio(user_id):
+        elif rol == 'socio':
             profile = {
                 "id_user": user['id_user'],
                 "firstname": user['firstname'],
                 "lastname": user['lastname'],
                 "email": user['email'],
-                "role": "socio",  # Rol de socio
+                "role": rol,  # Rol de socio
                 "plan": UserModel.obtener_plan_socio(user_id),
                 "activo": UserModel.obtener_estado_socio(user_id)
             }

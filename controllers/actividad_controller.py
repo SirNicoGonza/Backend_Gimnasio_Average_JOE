@@ -32,10 +32,22 @@ class ActividadController:
     @staticmethod
     def listar_actividades():
         '''Obtiene la lista de todas las actividades'''
+        dict_act = dict()
+        list_act = []
         actividades = ActividadModel.listar_actividades()
         if 'error' in actividades:
             return jsonify({'mensaje': 'Error al obtener las actividades', 'error': actividades['error']}), 500
-        return jsonify({'actividades': actividades}), 200
+        for i in range(len(actividades)):
+            dict_act['id_actividad'] = actividades[i][0]
+            dict_act['actividad_name'] = actividades[i][1]
+            dict_act['instructor'] = actividades[i][2]
+            dict_act['precio'] = actividades[i][3]
+            dict_act['hora'] = actividades[i][4]
+            dict_act['dia'] = actividades[i][5]
+            dict_act['cupo_max'] = actividades[i][6]
+            list_act.append(dict_act)
+
+        return jsonify({'actividades': list_act}), 200
     
     @staticmethod
     def actualizar_actividad(id_act):
@@ -84,6 +96,7 @@ class ActividadController:
     @staticmethod
     def obtener_actividad_por_id(id_act):
         '''Obtiene una actividad por su id'''
+        dict_act = dict()
         actividad = ActividadModel.obtener_actividad_por_id(id_act)
         
         # Si el resultado es None, significa que no se encontró la actividad
@@ -95,11 +108,20 @@ class ActividadController:
             return jsonify({'mensaje': 'Error al obtener la actividad', 'error': actividad['error']}), 500
 
         # Respuesta exitosa
-        return jsonify({'actividad': actividad}), 200
+        dict_act['id_actividad'] = actividad[0]
+        dict_act['actividad_name'] = actividad[1]
+        dict_act['instructor'] = actividad[2]
+        dict_act['precio'] = actividad[3]
+        dict_act['hora'] = actividad[4]
+        dict_act['dia'] = actividad[5]
+        dict_act['cupo_max'] = actividad[6]
+        return jsonify({'actividad': dict_act}), 200
     
     @staticmethod
     def obtener_actividad_por_fecha(fecha):
         '''Obtiene todas las actividades de una fecha determinada'''
+        dict_act = dict()
+        list_act = []
         fecha_valida = datetime.strptime(fecha, '%Y-%m-%d')
         actividades = ActividadModel.obtener_actividad_por_fecha(fecha_valida)
 
@@ -111,7 +133,17 @@ class ActividadController:
             return jsonify({'mensaje': 'Error al obtener las actividades', 'error': actividades['error']}), 500
 
         # Respuesta exitosa
-        return jsonify({'actividades': actividades}), 200
+        for i in range(len(actividades)):
+            dict_act['id_actividad'] = actividades[i][0]
+            dict_act['actividad_name'] = actividades[i][1]
+            dict_act['instructor'] = actividades[i][2]
+            dict_act['precio'] = actividades[i][3]
+            dict_act['hora'] = actividades[i][4]
+            dict_act['dia'] = actividades[i][5]
+            dict_act['cupo_max'] = actividades[i][6]
+            list_act.append(dict_act)
+
+        return jsonify({'actividades': list_act}), 200
     
     @staticmethod
     @jwt_required()
@@ -123,10 +155,15 @@ class ActividadController:
         if rol != 'socio':
             return jsonify({"error": "Acceso denegado, solo los socios pueden acceder a esta información"}), 403
         
-        resultado = ActividadModel.inscripcion_actividad(user, id_act)
-        if "error" in resultado:  # Ahora se verifica si hay un error en el resultado
-            return jsonify({'mensaje': 'Error al registrar la inscripcion', 'error': resultado['error']}), 500
-        return jsonify({'mensaje': 'Inscripción registrada exitosamente'}), 201
+        response_profile, _ = UserController.obtener_profile()
+        profile = response_profile.get_json()
+        print(profile)
+        if profile['profile']['plan'] != 'Sin plan asignado':
+            resultado = ActividadModel.inscripcion_actividad(user, id_act)
+            if "error" in resultado:  # Ahora se verifica si hay un error en el resultado
+                return jsonify({'mensaje': 'Error al registrar la inscripcion', 'error': resultado['error']}), 500
+            return jsonify({'mensaje': 'Inscripción registrada exitosamente'}), 201
+        return jsonify({"error": "Debe tener un plan asignado para inscribirse en actividades extras"}), 403
 
     @staticmethod
     @jwt_required()

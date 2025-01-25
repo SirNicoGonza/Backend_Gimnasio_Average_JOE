@@ -15,7 +15,8 @@ class DatabaseConnection:
                 user=cls._config.DATABASE_USERNAME,
                 port=cls._config.DATABASE_PORT,
                 password=cls._config.DATABASE_PASSWORD,
-                database=cls._config.DATABASE_NAME
+                database=cls._config.DATABASE_NAME,
+                use_pure=True, #Usa el cliente puro de Python
             )
         return cls._connection
 

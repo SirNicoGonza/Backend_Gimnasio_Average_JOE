@@ -65,7 +65,10 @@ class ActividadModel:
         query = 'SELECT * FROM actividades WHERE id_actividad = %s;'
         params = (id_act,)
         try:
-            return DatabaseConnection.fetch_one(query, params)
+            result= DatabaseConnection.fetch_one(query, params)
+            result_formateado= convertir_valores_para_json(result)
+            
+            return result_formateado
         except Exception as e:
             return {'error': str(e)}
         
@@ -75,7 +78,10 @@ class ActividadModel:
         query = 'SELECT * FROM actividades WHERE dia = %s;'
         params = (fecha,)
         try:
-            return DatabaseConnection.fetch_all(query, params)
+            result= DatabaseConnection.fetch_all(query, params) 
+            result_formateado= convertir_valores_para_json(result)
+            
+            return result_formateado 
         except Exception as e:
             return {'error': str(e)}
         
@@ -94,7 +100,7 @@ class ActividadModel:
         query = '''SELECT a.* FROM actividades a
                     JOIN inscripciones i ON a.id_actividad = i.actividad_id
                     WHERE socios_ID = %s;'''
-        params = (id_socio)
+        params = (id_socio,)
         try:
             return DatabaseConnection.fetch_all(query, params)
         except Exception as e:

@@ -77,7 +77,7 @@ class UserController:
             return jsonify({"error": "Contraseña incorrecta"}), 401
 
         # Crear el token
-        token = create_access_token(identity=user['id_user'], expires_delta=timedelta(hours=12))
+        token = create_access_token(identity=str(user['id_user']), expires_delta=timedelta(hours=12))
 
         # Determinar el rol del usuario
         if UserModel.es_empleado(user['id_user']):
@@ -94,7 +94,7 @@ class UserController:
         }), 200
     
     @staticmethod
-    @jwt_required
+    @jwt_required()
     def obtener_profile():
         """ Método para obtener el perfil de un usuario por su ID. """
         user_id, rol = UserController.obtener_id()

@@ -32,12 +32,12 @@ class ActividadController:
     @staticmethod
     def listar_actividades():
         '''Obtiene la lista de todas las actividades'''
-        dict_act = dict()
         list_act = []
         actividades = ActividadModel.listar_actividades()
         if 'error' in actividades:
             return jsonify({'mensaje': 'Error al obtener las actividades', 'error': actividades['error']}), 500
         for i in range(len(actividades)):
+            dict_act = dict()
             dict_act['id_actividad'] = actividades[i][0]
             dict_act['actividad_name'] = actividades[i][1]
             dict_act['instructor'] = actividades[i][2]
@@ -120,7 +120,6 @@ class ActividadController:
     @staticmethod
     def obtener_actividad_por_fecha(fecha):
         '''Obtiene todas las actividades de una fecha determinada'''
-        dict_act = dict()
         list_act = []
         fecha_valida = datetime.strptime(fecha, '%Y-%m-%d')
         actividades = ActividadModel.obtener_actividad_por_fecha(fecha_valida)
@@ -134,6 +133,7 @@ class ActividadController:
 
         # Respuesta exitosa
         for i in range(len(actividades)):
+            dict_act = dict()
             dict_act['id_actividad'] = actividades[i][0]
             dict_act['actividad_name'] = actividades[i][1]
             dict_act['instructor'] = actividades[i][2]
@@ -169,6 +169,7 @@ class ActividadController:
     @jwt_required()
     def obtener_actividades_por_socio():
         '''Obtiene las actividades de un socio por su id'''
+        list_act = []
         user, rol = UserController.obtener_id()
 
         # Verificar que el rol sea "socio"
@@ -185,4 +186,15 @@ class ActividadController:
             return jsonify({'mensaje': 'Error al obtener las actividades', 'error': actividades['error']}), 500
 
         # Respuesta exitosa
-        return jsonify({'actividades': actividades}), 200
+        for i in range(len(actividades)):
+            dict_act = dict()
+            dict_act['id_actividad'] = actividades[i][0]
+            dict_act['actividad_name'] = actividades[i][1]
+            dict_act['instructor'] = actividades[i][2]
+            dict_act['precio'] = actividades[i][3]
+            dict_act['hora'] = actividades[i][4]
+            dict_act['dia'] = actividades[i][5]
+            dict_act['cupo_max'] = actividades[i][6]
+            list_act.append(dict_act)
+
+        return jsonify({'actividades': list_act}), 200

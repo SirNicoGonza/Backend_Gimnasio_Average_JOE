@@ -11,7 +11,8 @@ class UserController:
     @staticmethod
     def obtener_id():
         '''Obtiene el id de usuario desde el token'''
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
+        print(user_id)
         if UserModel.es_empleado(user_id):
             return (user_id, 'empleado')
         elif UserModel.es_socio(user_id):
@@ -77,7 +78,7 @@ class UserController:
             return jsonify({"error": "Contraseña incorrecta"}), 401
 
         # Crear el token
-        token = create_access_token(identity=user['id_user'], expires_delta=timedelta(hours=12))
+        token = create_access_token(identity=str(user['id_user']), expires_delta=timedelta(hours=12))
 
         # Determinar el rol del usuario
         if UserModel.es_empleado(user['id_user']):

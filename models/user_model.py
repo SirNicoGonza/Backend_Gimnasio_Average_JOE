@@ -77,7 +77,10 @@ class UserModel:
 
         try:
             result = DatabaseConnection.fetch_one(query, params)
-            return result is not None
+            print(result)
+            result_formateado= result[0]
+            print(result_formateado)
+            return result_formateado is not None
         except Exception as e:
             return False  # Si ocurre un error, no consideramos al usuario como socio
 

@@ -5,7 +5,7 @@ Este es el proyecto backend para el sistema de gestión del gimnasio
 
 ## Requisitos previos
 
-Antes de comenzar, asegúrate de tener instalados los siguientes componentes:
+Tener instalados los siguientes componentes:
 
 - Python 3.8 o superior
 - MySQL

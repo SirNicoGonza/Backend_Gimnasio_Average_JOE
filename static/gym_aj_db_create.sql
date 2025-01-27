@@ -15,7 +15,9 @@ create table if not exists planes(
 	id_plan INT UNIQUE auto_increment NOT NULL PRIMARY KEY,
     nombre VARCHAR(50),
     precio DECIMAL(10,2),
-    descripcion tinytext
+    descripcion tinytext,
+    dias_mes INT,
+    dias_gracia INT
 ) Engine= InnoDB;
 
 CREATE TABLE IF NOT EXISTS socios(
@@ -23,7 +25,8 @@ CREATE TABLE IF NOT EXISTS socios(
     id_user INT,
     plan_id INT,
     activo boolean,
-    dias_gracia INT default 3,
+    dias_habilitado INT default 0,
+    dias_gracia INT default 0,
     constraint plan_id foreign key (plan_id)
     references planes(id_plan)
     ON update CASCADE

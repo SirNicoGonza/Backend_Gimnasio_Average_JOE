@@ -121,7 +121,7 @@ class UserModel:
     def asignar_socio(user_id):
         """Asigna el rol de socio al usuario."""
         query = "INSERT INTO socios (id_user, plan_id, activo) VALUES (%s, %s, %s)"
-        params = (user_id, None, True)  # Inicialmente sin plan asignado, y marcado como activo
+        params = (user_id, None, False)  # Inicialmente sin plan asignado, y marcado como inactivo
 
         try:
             DatabaseConnection.execute_query(query, params)
@@ -129,3 +129,43 @@ class UserModel:
         except Exception as e:
             print(f"Error al asignar socio: {e}")
             return False
+        
+    @staticmethod
+    def encryptar(id_user, hash):
+        '''Encripta contraseñas no encriptadas cargadas manualmente en la db'''
+        query = 'UPDATE users SET passwords = %s WHERE id_user = %s'
+        params = (hash, id_user)
+        try:
+            DatabaseConnection.execute_query(query, params)
+            return True
+        except Exception as e:
+            print(f"Error al actualizar contraseña: {e}")
+            return False
+        
+    @staticmethod
+    def eliminar_socio(id_user):
+        '''Dar de baja un socio'''
+        query = 'DELETE FROM users WHERE id_user = %s;'
+        params = (id_user,)
+        try:
+            rows_affected = DatabaseConnection.execute_query(query, params)
+            if rows_affected == 0:
+                return {'error': 'No se encontró un socio con el ID proporcionado.'}
+            return {'success': True}
+        except Exception as e:
+            return {'error': str(e)}
+        
+    @staticmethod
+    def listar_socios():
+        '''Obtiene una lista de todos los socios'''
+        query = '''SELECT s.id_socio, s.activo, u.firstname, u.lastname, u.email, p.nombre
+                    FROM socios s 
+                    LEFT JOIN users u ON s.id_user = u.id_user
+                    LEFT JOIN planes p ON s.plan_id = p.id_plan
+                    ORDER BY u.lastname ASC, u.firstname ASC '''
+        
+        try:
+            return DatabaseConnection.fetch_all(query)
+        
+        except Exception as e:
+            return {'error': str(e)}

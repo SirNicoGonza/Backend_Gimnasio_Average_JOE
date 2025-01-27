@@ -23,3 +23,14 @@ def login():
 def obtener_profile():
     """ Ruta para obtener el perfil de un usuario por su ID. """
     return UserController.obtener_profile()
+
+@user_bp.route('/', defaults={'id_user': None}, methods=['DELETE'])
+@user_bp.route('/<int:id_user>', methods=['DELETE'])
+def eliminar_socio(id_user):
+    
+    return UserController.eliminar_socio(id_user)
+
+@user_bp.route('/socios', methods=['GET'])
+def listar_socios():
+    """Ruta para listar a todos los socios"""
+    return UserController.listar_socios()

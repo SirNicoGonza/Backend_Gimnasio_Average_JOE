@@ -40,7 +40,7 @@ class UserController:
 
         # Encriptar la contraseña
         password_bytes = password.encode('utf-8')
-        hash_password = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+        hash_password = bcrypt.hashpw(password_bytes, bcrypt.gensalt()).decode('utf-8')
 
         # Crear el usuario en la base de datos
         if not UserModel.crear_user(nombre, apellido, email, hash_password):
@@ -73,8 +73,13 @@ class UserController:
             return jsonify({"error": "Usuario no encontrado"}), 404
 
         # Verificar la contraseña
-        if not bcrypt.checkpw(password.encode('utf-8'), user['passwords'].encode('utf-8')):
-            return jsonify({"error": "Contraseña incorrecta"}), 401
+        try:
+            if not bcrypt.checkpw(password.encode('utf-8'), user['passwords'].encode('utf-8')):
+                return jsonify({"error": "Contraseña incorrecta"}), 401
+        except ValueError:
+            pass_bytes = user['passwords'].encode('utf-8')
+            hash_password = bcrypt.hashpw(pass_bytes, bcrypt.gensalt()).decode('utf-8')
+            UserModel.encryptar(user['id_user'], hash_password)
 
         # Crear el token
         token = create_access_token(identity=str(user['id_user']), expires_delta=timedelta(hours=12))
@@ -128,3 +133,58 @@ class UserController:
             return jsonify({"error": "Rol desconocido"}), 400  # En caso de que no sea ni socio ni empleado
 
         return jsonify({"profile": profile}), 200
+
+    @staticmethod
+    @jwt_required()
+    def eliminar_socio(id_user = None):
+        '''Metodo para dar de baja a un socio'''
+        if id_user is None:
+            user_id, rol = UserController.obtener_id()
+            if rol == 'socio':
+                resultado = UserModel.eliminar_socio(user_id)
+
+                # Manejo de errores
+                if 'error' in resultado:
+                    return jsonify({'mensaje': 'Error al eliminar el socio', 'error': resultado['error']}), 400
+
+                # Éxito
+                if resultado.get('success'):
+                    return jsonify({'mensaje': 'Socio eliminado exitosamente'}), 200
+
+                # Caso inesperado (por si ocurre algo fuera de los escenarios previstos)
+                return jsonify({'mensaje': 'Ocurrió un error inesperado.'}), 500
+            return jsonify({'mensaje': 'Como empleado no puedes eliminarte del sistema'})
+        
+        if UserModel.es_socio(id_user):
+            resultado = UserModel.eliminar_socio(id_user)
+
+            # Manejo de errores
+            if 'error' in resultado:
+                return jsonify({'mensaje': 'Error al eliminar el socio', 'error': resultado['error']}), 400
+
+            # Éxito
+            if resultado.get('success'):
+                return jsonify({'mensaje': 'Socio eliminado exitosamente'}), 200
+      
+            # Caso inesperado (por si ocurre algo fuera de los escenarios previstos)
+            return jsonify({'mensaje': 'Ocurrió un error inesperado.'}), 500
+        return jsonify({'mensaje': 'Como empleado no puedes eliminarte del sistema'})
+    
+    @staticmethod
+    def listar_socios():
+        '''Obtiene una lista de todos los socios'''
+        list_socios = []
+        socios = UserModel.listar_socios()
+        if 'error' in socios:
+            return jsonify({'mensaje': 'Error al obtener los socios', 'error': socios['error']}), 500
+        for i in range(len(socios)):
+            dict_soc = dict()
+            dict_soc['id_socio'] = socios[i][0]
+            dict_soc['activo'] = 'si' if socios[i][1] == 1 else 'no'
+            dict_soc['nombre'] = socios[i][2]
+            dict_soc['apellido'] = socios[i][3]
+            dict_soc['email'] = socios[i][4]
+            dict_soc['plan'] = socios[i][5]
+            list_socios.append(dict_soc)
+
+        return jsonify({'actividades': list_socios}), 200

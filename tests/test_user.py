@@ -9,23 +9,6 @@ from db import DatabaseConnection
 from models.user_model import UserModel
 from tests.utils import cleanup  # Función para limpiar la BD después de cada test
 
-@pytest.fixture(scope="function")
-def db_connection():
-    """Crea una nueva conexión para cada test."""
-    db = DatabaseConnection.get_connection()
-    yield db
-    DatabaseConnection.close_connection()  # Cerramos después de cada test para evitar conexiones rotas
-
-@pytest.fixture(autouse=True)
-def setup(db_connection):
-    """Limpia la base de datos antes y después de cada prueba."""
-    with db_connection as conn:
-        cleanup(conn)  # Restablece la BD de prueba
-    yield
-    with db_connection as conn:
-        cleanup(conn)
-
-
 @pytest.fixture
 def test_user(db_connection):
     """Crea un usuario de prueba antes de cada test y lo elimina después."""

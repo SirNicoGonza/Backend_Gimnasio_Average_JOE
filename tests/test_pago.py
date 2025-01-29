@@ -9,24 +9,6 @@ from db import DatabaseConnection
 from models.pago_model import PagoModel
 from tests.utils import cleanup
 
-@pytest.fixture(scope="module")
-def db_connection():
-    """Fixture para inicializar la base de datos de prueba."""
-    db = DatabaseConnection.get_connection()
-    yield db
-    DatabaseConnection.close_connection()
-
-
-@pytest.fixture(autouse=True)
-def setup(db_connection):
-    """Limpia la base de datos antes y después de cada prueba."""
-    with db_connection as conn:
-        cleanup(conn)  # Restablece la BD de prueba
-    yield
-    with db_connection as conn:
-        cleanup(conn)
-
-
 @pytest.fixture
 def test_user(db_connection):
     """Crea un usuario de prueba antes de cada test y lo elimina después."""

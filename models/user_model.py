@@ -119,16 +119,32 @@ class UserModel:
         
     @staticmethod
     def asignar_socio(user_id):
-        """Asigna el rol de socio al usuario."""
+        """Asigna el rol de socio al usuario, verificando primero si existe y si ya es socio."""
+
+        # Verificar si el usuario existe
+        query_check = "SELECT id_user FROM users WHERE id_user = %s"
+        user_exists = DatabaseConnection.fetch_one(query_check, (user_id,))
+        
+        if not user_exists:
+            return "El usuario no existe"
+
+        # Verificar si el usuario ya es socio
+        query_socio = "SELECT id_user FROM socios WHERE id_user = %s"
+        socio_exists = DatabaseConnection.fetch_one(query_socio, (user_id,))
+
+        if socio_exists:
+            return "El usuario ya es socio"
+
+        # Si no es socio, proceder con la inserción
         query = "INSERT INTO socios (id_user, plan_id, activo) VALUES (%s, %s, %s)"
-        params = (user_id, None, False)  # Inicialmente sin plan asignado, y marcado como inactivo
+        params = (user_id, None, False)
 
         try:
             DatabaseConnection.execute_query(query, params)
             return True
         except Exception as e:
-            print(f"Error al asignar socio: {e}")
-            return False
+            return f"Error al asignar socio: {str(e)}"
+
         
     @staticmethod
     def encryptar(id_user, hash):

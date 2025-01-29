@@ -63,3 +63,16 @@ class PagoModel:
             return {"success": "Se actualizaron los socios vencidos"}
         except Exception as e:
             return {"error": str(e)}
+        
+    @staticmethod
+    def obtener_pagos_por_socio(id_socio):
+        """ Obtiene el historial de pagos de un socio """
+        query = """
+            SELECT p.id_pago_plan, p.fecha_pago, p.plan, pl.nombre AS plan_nombre
+            FROM pagos_planes p
+            JOIN socios s ON p.ID_socio = s.id_socio
+            JOIN planes pl ON p.plan = pl.id_plan
+            WHERE s.id_socio = %s
+            ORDER BY p.fecha_pago DESC;
+        """
+        return DatabaseConnection.fetch_all(query, (id_socio,))

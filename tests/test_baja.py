@@ -8,6 +8,7 @@ from db import DatabaseConnection
 from models.user_model import UserModel
 import pytest
 
+
 @pytest.fixture
 def db_connection():
     """Fixture para manejar la conexión a la base de datos."""
@@ -27,20 +28,24 @@ def test_user(db_connection):
     DatabaseConnection.execute_query(query, params)
     user_id_tuple = DatabaseConnection.fetch_one("SELECT id_user FROM users WHERE email = %s", ("test@example.com",))
     user_id = user_id_tuple[0] if user_id_tuple else None
+    
+    # Insertar usuario en la tabla 'socios'
+    query = "INSERT INTO socios (id_user, plan_id, activo) VALUES (%s, NULL, 0)"
+    DatabaseConnection.execute_query(query, (user_id,))
+    
     yield user_id
+    
     DatabaseConnection.execute_query("DELETE FROM socios WHERE id_user = %s", (user_id,))
     DatabaseConnection.execute_query("DELETE FROM users WHERE id_user = %s", (user_id,))
 
 
-def test_asignar_socio_exitoso(test_user):
-    """Prueba que un usuario existente pueda ser asignado como socio correctamente."""
-    resultado = UserModel.asignar_socio(test_user)
-    assert resultado, "El usuario no fue asignado como socio correctamente"
+def test_eliminar_socio(test_user):
+    """Prueba que un socio pueda darse de baja correctamente."""
+    resultado = UserModel.eliminar_socio(test_user)
+    assert resultado.get("success"), "El socio no fue eliminado correctamente"
     
-    query = "SELECT activo FROM socios WHERE id_user = %s"
+    query = "SELECT * FROM socios WHERE id_user = %s"
     params = (test_user,)
-    estado_tuple = DatabaseConnection.fetch_one(query, params)
-    estado = estado_tuple[0] if estado_tuple else None
+    socio = DatabaseConnection.fetch_one(query, params)
     
-    assert estado is not None, "El usuario no se encuentra en la tabla socios"
-    assert estado == 0, "El usuario no debería estar activo al asignarlo"
+    assert socio is None, "El socio todavía existe en la base de datos"

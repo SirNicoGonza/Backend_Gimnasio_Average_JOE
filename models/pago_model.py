@@ -49,3 +49,17 @@ class PagoModel:
             return DatabaseConnection.fetch_one(query, params)
         except Exception as e:
             return {'error': str(e)}
+    
+    @staticmethod
+    def verificar_vencimiento():
+        """ Desactiva a los socios que ya no tienen días habilitados ni días de gracia """
+        query = """
+            UPDATE socios 
+            SET activo = 0 
+            WHERE dias_habilitado = 0 AND dias_gracia = 0 AND activo = 1
+        """
+        try:
+            DatabaseConnection.execute_query(query)
+            return {"success": "Se actualizaron los socios vencidos"}
+        except Exception as e:
+            return {"error": str(e)}

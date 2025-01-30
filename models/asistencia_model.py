@@ -1,4 +1,5 @@
 from db import DatabaseConnection
+from .pago_model import PagoModel
 
 class AsistenciaModel:
     '''
@@ -104,10 +105,11 @@ class AsistenciaModel:
     
     @staticmethod
     def obtener_asistencias_por_socio(id_socio):
+        socio = PagoModel.buscar_socio(id_socio)
         """Obtiene todas las asistencias de un socio."""
         query = '''SELECT id_asistencia, fecha_hora, id_actividad, tipo_asistencia FROM asistencias
                 WHERE id_socio = %s ORDER BY fecha_hora DESC'''
-        params = (id_socio,)
+        params = (socio[0],)
         try:
             return DatabaseConnection.fetch_all(query, params)
         except Exception as e:

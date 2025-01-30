@@ -20,11 +20,8 @@ value (1,2);
 update socios set dias_habilitado = 16, dias_gracia = 4, activo = true
 where id_socio = 1;
 
-Insert into actividades (actividad_name, instructor, precio, hora, dia, cupo_max)
-value ('Clase de Pilate', 'Profe Peter Parker', 1000.00, 18, '2025-01-15', 30);
-
-insert into pagos_actividades (socio, actividad)
-value (1, 1);
+Insert into actividades (actividad_name, instructor, precio, hora, dias, cupo_max, cupo_disp, sesiones)
+value ('Clase de Pilate', 'Profe Peter Parker', 1000.00, '18:30:00', 'Martes y Jueves', 30, 30, 8);
 
 select * from users;
 

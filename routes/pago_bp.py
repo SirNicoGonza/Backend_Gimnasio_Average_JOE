@@ -5,7 +5,8 @@ from controllers.pago_controller import PagoController
 pago_bp = Blueprint('pago_bp', __name__)
 
 # Rutas
-pago_bp.route('/<int:id_user>', methods=['POST'])(PagoController.pago_plan)
+pago_bp.route('/<int:id_socio>', methods=['POST'])(PagoController.pago_plan)
+pago_bp.route('/<int:id_socio>/<int:id_act>', methods=['POST'])(PagoController.pago_actividad)
 
 @pago_bp.route('/socio', methods=['GET'])
 def obtener_pagos_socio():

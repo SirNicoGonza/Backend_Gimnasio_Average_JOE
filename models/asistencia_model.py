@@ -101,3 +101,14 @@ class AsistenciaModel:
             return {"success": True}  
         except Exception as e:
             return {"error": str(e)}
+    
+    @staticmethod
+    def obtener_asistencias_por_socio(id_socio):
+        """Obtiene todas las asistencias de un socio."""
+        query = '''SELECT id_asistencia, fecha_hora, id_actividad, tipo_asistencia FROM asistencias
+                WHERE id_socio = %s ORDER BY fecha_hora DESC'''
+        params = (id_socio,)
+        try:
+            return DatabaseConnection.fetch_all(query, params)
+        except Exception as e:
+            return {"error": str(e)}

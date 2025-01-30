@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.asistencia_model import AsistenciaModel
 
 class AsistenciaController:
@@ -54,3 +55,22 @@ class AsistenciaController:
                     return jsonify({'mensaje': 'Error al deshabilitar al socio', 'error': deshabilitar['error']}), 500
                 print('Actividad deshabilitada hasta nuevo pago')
             return jsonify({'mensaje': 'Asistencia registrada exitosamente'}), 201
+        
+    @staticmethod
+    @jwt_required()
+    def obtener_mis_asistencias():
+        """ Devuelve la lista de asistencias del usuario autenticado. """
+        usuario_id = get_jwt_identity()
+        print("Usuario autenticado:", usuario_id)
+
+        asistencias = AsistenciaModel.obtener_asistencias_por_socio(usuario_id)
+
+        if "error" in asistencias:
+            return jsonify({"mensaje": "Error al obtener asistencias", "error": asistencias["error"]}), 500
+
+        return jsonify({
+            "success": True,
+            "asistencias": [
+                {"id": a[0], "fecha": a[1], "actividad_id": a[2], "tipo": a[3]} for a in asistencias
+            ]
+        }), 200

@@ -28,7 +28,7 @@ def test_user(db_connection):
     DatabaseConnection.execute_query(query, (user_id,))
 
     # Activar el usuario como socio con un plan
-    PagoModel.activar_socio(user_id, 30, 5)
+    PagoModel.activar_socio(user_id, 30, 5, 0)
 
     yield user_id  # Devuelve el ID del usuario para usarlo en los tests
 

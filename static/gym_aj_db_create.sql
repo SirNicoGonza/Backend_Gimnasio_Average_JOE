@@ -47,29 +47,39 @@ CREATE TABLE IF NOT EXISTS empleados(
     ON DELETE CASCADE
 ) Engine= InnoDB;
 
-CREATE TABLE if not exists asistencias (
-    id_asistencia INT AUTO_INCREMENT PRIMARY KEY,
-    id_socio INT NOT NULL,
-    fecha_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_socio) REFERENCES socios(id_socio)
-    on update cascade
-    on delete cascade
-) Engine= InnoDB;
-
 CREATE TABLE if not exists actividades (
 	id_actividad INT UNIQUE auto_increment PRIMARY KEY,
     actividad_name VARCHAR(75),
     instructor VARCHAR(50),
     precio DECIMAL (10,2),
     hora TIME,
-    dia DATE,
-    cupo_max int
+    dias VARCHAR(20),
+    cupo_max INT,
+    cupo_disp INT,
+    sesiones INT,
+    estado BOOLEAN default true
+) Engine= InnoDB;
+
+CREATE TABLE if not exists asistencias (
+    id_asistencia INT AUTO_INCREMENT PRIMARY KEY,
+    id_socio INT NOT NULL,
+    id_actividad INT NULL,
+    tipo_asistencia ENUM ('plan', 'actividad') NOT NULL,
+    fecha_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_socio) REFERENCES socios(id_socio)
+    on update cascade
+    on delete cascade,
+    FOREIGN KEY (id_actividad) REFERENCES actividades(id_actividad)
+    on update cascade
+    on delete set null
 ) Engine= InnoDB;
 
 CREATE TABLE if not exists inscripciones (
 	id_inscripcion INT UNIQUE auto_increment PRIMARY KEY,
     socios_ID int,
     actividad_id int,
+    estado BOOLEAN default true,
+    sesiones_disp INT default 0,
     constraint socios_ID foreign key (socios_ID)
     References socios(id_socio)
     ON update cascade

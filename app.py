@@ -6,6 +6,7 @@ from routes.user_bp import user_bp
 from routes.plan_bp import plan_bp  # Importar el Blueprint de planes
 from routes.actividad_bp import actividad_bp
 from routes.pago_bp import pago_bp
+from routes.asistencia_bp import asistencia_bp
 
 def create_app():
     app = Flask(__name__)
@@ -23,6 +24,7 @@ def create_app():
     app.register_blueprint(plan_bp, url_prefix='/planes')  # Registrar las rutas para los planes
     app.register_blueprint(actividad_bp, url_prefix='/actividades')
     app.register_blueprint(pago_bp, url_prefix='/pagos')
+    app.register_blueprint(asistencia_bp, url_prefix='/asistencias')
 
     @app.route('/')
     def home():

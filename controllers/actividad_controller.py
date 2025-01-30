@@ -307,7 +307,7 @@ class ActividadController:
         '''Obtiene las actividades de un socio por su id'''
         list_act = []
         
-        actividades = ActividadModel.obtener_actividades_por_socio(id_socio)
+        actividades = ActividadModel.obtener_actividades_por_id_socio(id_socio)
 
         if not actividades:
             return jsonify({'mensaje': 'No hay actividades asociadas para este socio'}), 404

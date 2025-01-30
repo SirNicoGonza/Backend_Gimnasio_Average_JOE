@@ -123,6 +123,21 @@ class ActividadModel:
             return result_formateado
         except Exception as e:
             return {'error': str(e)}
+
+    @staticmethod
+    def obtener_actividades_por_id_socio(id_socio):
+        query = '''SELECT a.* FROM actividades a
+                    JOIN inscripciones i ON a.id_actividad = i.actividad_id
+                    WHERE socios_ID = %s;'''
+        params = (id_socio,)
+        try:
+            result= DatabaseConnection.fetch_all(query, params) 
+            result_formateado= convertir_valores_para_json(result)
+            
+            return result_formateado
+        except Exception as e:
+            return {'error': str(e)}
+        
         
     @staticmethod
     def deshabilitar_actividad(id_act):

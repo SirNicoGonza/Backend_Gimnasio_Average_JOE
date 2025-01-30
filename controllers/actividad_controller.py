@@ -302,3 +302,32 @@ class ActividadController:
             return jsonify({'mensaje': 'Inscripción registrada exitosamente'}), 201
         return jsonify({"error": "Debe ser socio activo para inscribirse en actividades extras"}), 403
         
+    @staticmethod
+    def obtener_actividades_por_id_socio(id_socio):
+        '''Obtiene las actividades de un socio por su id'''
+        list_act = []
+        
+        actividades = ActividadModel.obtener_actividades_por_socio(id_socio)
+
+        if not actividades:
+            return jsonify({'mensaje': 'No hay actividades asociadas para este socio'}), 404
+
+        # Si ocurre un error en la consulta
+        if 'error' in actividades:
+            return jsonify({'mensaje': 'Error al obtener las actividades', 'error': actividades['error']}), 500
+
+        # Respuesta exitosa
+        for i in range(len(actividades)):
+            dict_act = dict()
+            dict_act['id_actividad'] = actividades[i][0]
+            dict_act['actividad_name'] = actividades[i][1]
+            dict_act['instructor'] = actividades[i][2]
+            dict_act['precio'] = actividades[i][3]
+            dict_act['hora'] = actividades[i][4]
+            dict_act['dia'] = actividades[i][5]
+            dict_act['cupo_max'] = actividades[i][6]
+            dict_act['cupo_disp'] = actividades[i][7]
+            dict_act['sesiones'] = actividades[i][8]
+            list_act.append(dict_act)
+
+        return jsonify({'actividades': list_act}), 200

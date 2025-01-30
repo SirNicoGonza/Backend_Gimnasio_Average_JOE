@@ -12,5 +12,6 @@ actividad_bp.route('/<int:id_act>', methods=['GET'])(ActividadController.obtener
 actividad_bp.route('/<string:dia>', methods=['GET'])(ActividadController.obtener_actividad_por_dia)
 actividad_bp.route('/inscripcion/<int:id_act>', methods=['POST'])(ActividadController.inscripcion_actividad)
 actividad_bp.route('/actxsocio', methods=['GET'])(ActividadController.obtener_actividades_por_socio)
+actividad_bp.route('/actxsocio/<int:id_socio>', methods=['GET'])(ActividadController.obtener_actividades_por_id_socio)
 actividad_bp.route('/inscripcion/<int:id_act>', methods=['DELETE'])(ActividadController.cancelar_inscripcion)
 actividad_bp.route('/inscripcion/<int:id_act>', methods=['PATCH'])(ActividadController.renovar_inscripcion)

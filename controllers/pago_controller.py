@@ -74,7 +74,7 @@ class PagoController:
         # Obtener pagos
         pagos = PagoModel.obtener_pagos_por_socio(socio[0])
         if not pagos:
-            return jsonify({"mensaje": "No se encontraron pagos"}), 404
+            return jsonify({"mensaje": "Aún no hay pagos registrados"}), 200
 
         # Json pagos socio
         pagos_json = [
